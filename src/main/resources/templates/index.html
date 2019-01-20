@@ -23,7 +23,7 @@
             </div>
             <div class="form-group row">
                 <label class="col-md-3 col-form-label" for="selectCountry">수취국가</label>
-                <div class="col-md-9">
+                <div class="col-md-6">
                     <select id="selectCountry" class="custom-select mr-sm-2">
                         <option selected value="KRW">한국(KRW)</option>
                         <option value="JPY">일본(JPY)</option>
@@ -34,13 +34,16 @@
             <div class="form-group row">
                 <label class="col-md-3 col-form-label" for="exchangeRate">환율</label>
                 <div class="col-md-9">
-                    <p id="exchangeRate" class="form-control-plaintext">1,312.00 KRW/USD</p>
+                    <p class="form-control-plaintext"><strong id="exchangeRate" th:text="${exchangeRate} + ' KRW/USD'"></strong></p>
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-md-3 col-form-label" for="remittanceAmount">송금액</label>
-                <div class="col-md-9">
+                <div class="col-md-8 input-group">
                     <input type="text" id="remittanceAmount" class="form-control">
+                    <div class="input-group-append">
+                        <span class="input-group-text">USD</span>
+                    </div>
                 </div>
             </div>
             <div class="text-center">
@@ -53,21 +56,39 @@
     </div>
 </div>
 <script type="text/javascript">
-    function getExchangeRate() {
+
+    $('#selectCountry').change(function () {
+
+        var currency = $(this).val();
+
         $.ajax({
-            url: "http://www.apilayer.net/api/live?access_key=3238568643b24939f678930d6c20d3e2&currencies=KRW,JPY,PHP&source=USD",
+            url: "/api/exchangeRates/" + currency,
             type:"GET",
-            dataType : "json",
             success : function (data) {
-                console.log(data);
+                $('#exchangeRate').text(data + " " + currency + "/USD");
             },
             error : function (request) {
                 alert(request.responseText + "\n");
             }
         });
-    }
+    });
 
-    getExchangeRate();
+    $('#submitButton').click(function () {
+        var currency = $(this).val();
+
+        $.ajax({
+            url: "/api/exchangeRates",
+            data: {currency : currency},
+            type:"GET",
+            success : function (data) {
+                $('#exchangeRate').text(data + " " + currency + "/USD");
+            },
+            error : function (request) {
+                alert(request.responseText + "\n");
+            }
+        });
+    });
+
 </script>
 </body>
 </html>

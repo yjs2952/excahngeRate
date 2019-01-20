@@ -1,37 +1,60 @@
 package com.wirebarley.exchangerate.service;
 
+import com.wirebarley.exchangerate.dto.ApiData;
+import com.wirebarley.exchangerate.dto.ExchangeRate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
+import java.text.DecimalFormat;
+import java.util.Optional;
 
 @Slf4j
 @Service
 public class ExchangeRateRestService {
-    private final RestTemplate restTemplate;
 
-    /*@Autowired
-    private Environment env;*/
+    private final RestTemplate restTemplate;
 
     @Value("${access_key}")
     private String accessKey;
-
-    @Value("${currencies}")
-    private String currencies;
 
     @Value("${source}")
     private String source;
 
     public ExchangeRateRestService(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.rootUri("http://www.apilayer.net/api/live?access_key=" + accessKey + "&currencies=" + currencies + "&source=" + source).build();
-        //this.restTemplate = restTemplateBuilder.rootUri("http://www.apilayer.net/api/live?access_key=" + env.getProperty("access_key") + "&currencies=" + env.getProperty("currencies") + "&source=" + env.getProperty("source")).build();
+        this.restTemplate = restTemplateBuilder.build();
     }
 
-    public void method() {
-        log.info(restTemplate.getForObject("http://www.apilayer.net/api/live?access_key=" + accessKey + "&currencies=" + currencies + "&source=" + source, HashMap.class).toString());
+    public String getExchangeRateByCurrency(String currency) {
+        double originExchangeRate = getExchangeRate(currency);
+        return new DecimalFormat("###,###.00").format(originExchangeRate);
+    }
+
+    public String getRemittanceAmount(ExchangeRate exchangeRateDTO) {
+        return getDicimalFormatNumber(getReceivedAmount(exchangeRateDTO));
+    }
+
+
+
+
+
+    private double getExchangeRate(String currency) {
+        ApiData apiData = restTemplate.getForObject("http://www.apilayer.net/api/live?access_key=" + accessKey + "&currencies=" + currency + "&source=" + source, ApiData.class);
+
+        return Optional.ofNullable(apiData)
+                .map(ApiData::getQuotes)
+                .map(map -> map.get(source + currency))
+                .orElseThrow(RuntimeException::new);
+    }
+
+    private String getDicimalFormatNumber(double number) {
+        return new DecimalFormat("###,###.00").format(number);
+    }
+
+    private double getReceivedAmount(ExchangeRate exchangeRateDTO){
+        return getExchangeRate(exchangeRateDTO.getCurrency()) * exchangeRateDTO.getRemittanceAmount();
     }
 
 }
