@@ -9,6 +9,7 @@
 
     <script src="webjars/jquery/3.3.1/dist/jquery.min.js"></script>
     <script src="webjars/bootstrap/4.1.3/dist/js/bootstrap.min.js"></script>
+
 </head>
 <body>
 <div class="container">
@@ -47,18 +48,17 @@
                 </div>
             </div>
             <div class="text-center">
-                <button type="submit" id="submitButton" class="btn btn-info">Submit</button>
+                <button type="button" id="submitButton" class="btn btn-info">Submit</button>
             </div>
         </form>
         <div class="mt-4">
-            <p>요기서 <strong>에러 메시지</strong> 뜬다?</p>
+            <p>수취금액은 <strong id="receivedAmount"></strong> 입니다.</p>
         </div>
     </div>
 </div>
 <script type="text/javascript">
 
     $('#selectCountry').change(function () {
-
         var currency = $(this).val();
 
         $.ajax({
@@ -74,17 +74,25 @@
     });
 
     $('#submitButton').click(function () {
-        var currency = $(this).val();
+        var currency = $('#selectCountry').val();
+        var remittanceAmount = $('#remittanceAmount').val();
+        var jsonData = JSON.stringify({
+            currency : currency,
+            remittanceAmount: remittanceAmount
+        });
 
         $.ajax({
             url: "/api/exchangeRates",
-            data: {currency : currency},
-            type:"GET",
+            data: jsonData,
+            contentType: "application/json",
+            type:"POST",
             success : function (data) {
-                $('#exchangeRate').text(data + " " + currency + "/USD");
+                $('#receivedAmount').text(data + " " + currency+ "/USD");
+                console.log(data);
             },
             error : function (request) {
-                alert(request.responseText + "\n");
+                console.log(request.responseText + "\n");
+                //alert(request.responseText + "\n");
             }
         });
     });

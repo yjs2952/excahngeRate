@@ -5,7 +5,10 @@ import com.wirebarley.exchangerate.service.ExchangeRateRestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -22,6 +25,21 @@ public class ExchangeRateRestController {
     public ResponseEntity<?> getExchangeRate(@PathVariable String currency) {
         try {
             return ResponseEntity.ok(exchangeRateRestService.getExchangeRateByCurrency(currency));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> getRemittanceAmount(@Valid @RequestBody ExchangeRate exchangeRateDTO, BindingResult bindingResult) {
+
+        // validation 체크
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            return ResponseEntity.ok(exchangeRateRestService.getRemittanceAmount(exchangeRateDTO));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
