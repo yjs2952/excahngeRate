@@ -30,8 +30,14 @@ public class ExchangeRateRestController {
         }
     }
 
+    /*@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public String badRequest() {
+        return "잘못된 요청입니다.";
+    }*/
+
     @PostMapping
-    public ResponseEntity<?> getRemittanceAmount(@Valid @RequestBody ExchangeRate exchangeRateDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> getRemittanceAmount(@RequestBody @Valid ExchangeRate exchangeRateDTO, BindingResult bindingResult) {
 
         // validation 체크
         if (bindingResult.hasErrors()) {

@@ -15,7 +15,7 @@
 <div class="container">
     <div class="content">
         <h1 class="mb-5">환율 계산</h1>
-        <form>
+        <form onsubmit="return false">
             <div class="form-group row">
                 <label class="col-md-3 col-form-label">송금국가</label>
                 <div class="col-md-9">
@@ -45,8 +45,12 @@
                     <div class="input-group-append">
                         <span class="input-group-text">USD</span>
                     </div>
+                    <div id="err-message" class="invalid-feedback">
+
+                    </div>
                 </div>
             </div>
+
             <div class="text-center">
                 <button type="button" id="submitButton" class="btn btn-info">Submit</button>
             </div>
@@ -58,6 +62,46 @@
 </div>
 <script type="text/javascript">
 
+    //
+    function submitForm(){
+        var remittanceAmountTag = $('#remittanceAmount');
+        var errMessageTag = $('#err-message');
+        var currency = $('#selectCountry').val();
+        var remittanceAmount = remittanceAmountTag.val();
+        var jsonData = JSON.stringify({
+            currency : currency,
+            remittanceAmount: remittanceAmount
+        });
+
+        $.ajax({
+            url: "/api/exchangeRates",
+            data: jsonData,
+            contentType: "application/json",
+            type:"POST",
+            success : function (data) {
+                remittanceAmountTag.prop("class", "form-control");
+                $('#receivedAmount').text(data + " " + currency+ "/USD");
+            },
+            error : function (response) {
+                var errorMsg = response.responseJSON[0];
+
+                if (!errorMsg) {
+                    var errMsg = response.responseJSON.message.toString();
+
+                    if (errMsg.indexOf("InvalidFormatException") !== -1) {
+                        remittanceAmountTag.prop("class", "form-control is-invalid");
+                        errMessageTag.text("송금액이 바르지 않습니다");
+                    }
+                    return ;
+                }
+
+                remittanceAmountTag.prop("class", "form-control is-invalid");
+                errMessageTag.text(errorMsg['defaultMessage']);
+            }
+        });
+    }
+
+    // 수취 국가 변경시 환율 가져오기
     $('#selectCountry').change(function () {
         var currency = $(this).val();
 
@@ -73,28 +117,14 @@
         });
     });
 
-    $('#submitButton').click(function () {
-        var currency = $('#selectCountry').val();
-        var remittanceAmount = $('#remittanceAmount').val();
-        var jsonData = JSON.stringify({
-            currency : currency,
-            remittanceAmount: remittanceAmount
-        });
+    $('#remittanceAmount').keypress(function (e) {
+        if (e.keyCode === 13) {
+            submitForm();
+        }
+    });
 
-        $.ajax({
-            url: "/api/exchangeRates",
-            data: jsonData,
-            contentType: "application/json",
-            type:"POST",
-            success : function (data) {
-                $('#receivedAmount').text(data + " " + currency+ "/USD");
-                console.log(data);
-            },
-            error : function (request) {
-                console.log(request.responseText + "\n");
-                //alert(request.responseText + "\n");
-            }
-        });
+    $('#submitButton').click(function () {
+        submitForm();
     });
 
 </script>
