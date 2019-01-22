@@ -21,8 +21,8 @@ public class ExchangeRateRestController {
         this.exchangeRateRestService = exchangeRateRestService;
     }
 
-    @GetMapping("/{currency}")
-    public ResponseEntity<?> getExchangeRate(@PathVariable String currency) {
+    @GetMapping
+    public ResponseEntity<?> getExchangeRate(@RequestParam String currency) {
         try {
             return ResponseEntity.ok(exchangeRateRestService.getExchangeRateByCurrency(currency));
         } catch (Exception e) {
@@ -30,14 +30,8 @@ public class ExchangeRateRestController {
         }
     }
 
-    /*@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public String badRequest() {
-        return "잘못된 요청입니다.";
-    }*/
-
-    @PostMapping
-    public ResponseEntity<?> getRemittanceAmount(@RequestBody @Valid ExchangeRate exchangeRateDTO, BindingResult bindingResult) {
+    @GetMapping("/receivedAmount")
+    public ResponseEntity<?> getRemittanceAmount(@ModelAttribute @Valid ExchangeRate exchangeRateDTO, BindingResult bindingResult) {
 
         // validation 체크
         if (bindingResult.hasErrors()) {
