@@ -23,22 +23,31 @@ public class ExchangeRateRestService {
     @Value("${source}")
     private String source;
 
+    // restTemplate 초기화
     public ExchangeRateRestService(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
     }
 
+    /**
+     * 수취국가 선택시 환율 정보 조회
+     *
+     * @param currency
+     * @return
+     */
     public String getExchangeRateByCurrency(String currency) {
         double originExchangeRate = getExchangeRate(currency);
         return new DecimalFormat("###,###.00").format(originExchangeRate);
     }
 
+    /**
+     * 송금액 입력 시 수취금액 계산
+     *
+     * @param exchangeRateDTO
+     * @return
+     */
     public String getRemittanceAmount(ExchangeRate exchangeRateDTO) {
         return getDicimalFormatNumber(getReceivedAmount(exchangeRateDTO));
     }
-
-
-
-
 
     private double getExchangeRate(String currency) {
         ApiData apiData = restTemplate.getForObject("http://www.apilayer.net/api/live?access_key=" + accessKey + "&currencies=" + currency + "&source=" + source, ApiData.class);
@@ -49,12 +58,23 @@ public class ExchangeRateRestService {
                 .orElseThrow(RuntimeException::new);
     }
 
+    /**
+     * 수취 금액 및 환율 포맷 설정
+     *
+     * @param number
+     * @return
+     */
     private String getDicimalFormatNumber(double number) {
         return new DecimalFormat("###,###.00").format(number);
     }
 
+    /**
+     * 환율과 송금액의 곱 계산
+     *
+     * @param exchangeRateDTO
+     * @return
+     */
     private double getReceivedAmount(ExchangeRate exchangeRateDTO){
         return getExchangeRate(exchangeRateDTO.getCurrency()) * exchangeRateDTO.getRemittanceAmount();
     }
-
 }
