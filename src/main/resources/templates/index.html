@@ -55,9 +55,7 @@
                 <button type="button" id="submitButton" class="btn btn-info">Submit</button>
             </div>
         </form>
-        <div class="mt-4">
-            <p>수취금액은 <strong id="receivedAmount"></strong> 입니다.</p>
-        </div>
+        <div id="receivedAmount" class="mt-4"></div>
     </div>
 </div>
 <script type="text/javascript">
@@ -74,7 +72,7 @@
             type:"GET",
             success : function (data) {
                 remittanceAmountTag.prop("class", "form-control");
-                $('#receivedAmount').text(data + " " + currency+ "/USD");
+                $('#receivedAmount').html("<p>수취금액은 <strong>" + data + " "  + currency + "/USD</strong> 입니다.</p>");
             },
             error : function (response) {
                 var errorMsg = response.responseJSON[0];

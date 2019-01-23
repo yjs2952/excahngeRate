@@ -17,19 +17,33 @@ public class ExchangeRateRestController {
 
     private ExchangeRateRestService exchangeRateRestService;
 
-    public ExchangeRateRestController(ExchangeRateRestService exchangeRateRestService) {
+    public ExchangeRateRestController(ExchangeRateRestService exchangeRateRestService) { // 서비스 생성자 주입
         this.exchangeRateRestService = exchangeRateRestService;
     }
 
+    /**
+     * 특정 국가 환율 조회
+     *
+     * @param currency
+     * @return
+     */
     @GetMapping
     public ResponseEntity<?> getExchangeRate(@RequestParam String currency) {
         try {
             return ResponseEntity.ok(exchangeRateRestService.getExchangeRateByCurrency(currency));
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
+    /**
+     * 수취금액 계산
+     *
+     * @param exchangeRateDTO
+     * @param bindingResult
+     * @return
+     */
     @GetMapping("/receivedAmount")
     public ResponseEntity<?> getRemittanceAmount(@ModelAttribute @Valid ExchangeRate exchangeRateDTO, BindingResult bindingResult) {
 
@@ -41,9 +55,8 @@ public class ExchangeRateRestController {
         try {
             return ResponseEntity.ok(exchangeRateRestService.getRemittanceAmount(exchangeRateDTO));
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-
 }
