@@ -1,6 +1,5 @@
 package com.wirebarley.exchangerate.service;
 
-import com.wirebarley.exchangerate.dto.ApiData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,12 +16,12 @@ import java.text.DecimalFormat;
 public class ExchangeRateRestServiceTest {
 
     @Autowired
-    private ExchangeRateRestService exchangeRateRestService;
+    private ExchangeRateService exchangeRateService;
 
     @Test
     public void  외부_API_호출_테스트(){
         log.info(new DecimalFormat("###,###.##").format(100000000000D));
-        Assert.assertEquals("1125.803792", exchangeRateRestService.getExchangeRateByCurrency("KRW"));
+        Assert.assertEquals("1125.803792", exchangeRateService.getExchangeRateByCurrency("KRW"));
 
     }
 }

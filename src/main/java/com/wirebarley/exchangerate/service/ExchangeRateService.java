@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class ExchangeRateRestService {
+public class ExchangeRateService {
 
     private final RestTemplate restTemplate;
 
@@ -24,7 +24,7 @@ public class ExchangeRateRestService {
     private String source;
 
     // restTemplate 초기화
-    public ExchangeRateRestService(RestTemplateBuilder restTemplateBuilder) {
+    public ExchangeRateService(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
     }
 

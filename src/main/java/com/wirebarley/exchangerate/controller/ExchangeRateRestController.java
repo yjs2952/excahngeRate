@@ -1,7 +1,7 @@
 package com.wirebarley.exchangerate.controller;
 
 import com.wirebarley.exchangerate.dto.ExchangeRate;
-import com.wirebarley.exchangerate.service.ExchangeRateRestService;
+import com.wirebarley.exchangerate.service.ExchangeRateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +15,10 @@ import javax.validation.Valid;
 @RequestMapping("/api/exchangeRates")
 public class ExchangeRateRestController {
 
-    private ExchangeRateRestService exchangeRateRestService;
+    private ExchangeRateService exchangeRateService;
 
-    public ExchangeRateRestController(ExchangeRateRestService exchangeRateRestService) { // 서비스 생성자 주입
-        this.exchangeRateRestService = exchangeRateRestService;
+    public ExchangeRateRestController(ExchangeRateService exchangeRateService) { // 서비스 생성자 주입
+        this.exchangeRateService = exchangeRateService;
     }
 
     /**
@@ -30,7 +30,7 @@ public class ExchangeRateRestController {
     @GetMapping
     public ResponseEntity<?> getExchangeRate(@RequestParam String currency) {
         try {
-            return ResponseEntity.ok(exchangeRateRestService.getExchangeRateByCurrency(currency));
+            return ResponseEntity.ok(exchangeRateService.getExchangeRateByCurrency(currency));
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -53,7 +53,7 @@ public class ExchangeRateRestController {
         }
 
         try {
-            return ResponseEntity.ok(exchangeRateRestService.getRemittanceAmount(exchangeRateDTO));
+            return ResponseEntity.ok(exchangeRateService.getRemittanceAmount(exchangeRateDTO));
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
