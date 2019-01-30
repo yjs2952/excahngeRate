@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+/**
+ *  TODO : 예외 처리 할 때 bad_request 만 나오기 때문에 서버단의 오류인 경우 500 에러가 나와야 하는 것 처럼 예외를 분류해서 한번에 처리하는 것이 좋다.
+ *  TODO : 예외 처리 모듈을 따로 만들어서 어떤 오류인지 판단하고 그에 맞게 리턴하도록 하게 하는 것이 좋다.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/exchangeRates")
