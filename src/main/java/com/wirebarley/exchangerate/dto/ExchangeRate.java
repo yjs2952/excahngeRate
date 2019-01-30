@@ -13,8 +13,8 @@ public class ExchangeRate {
     private String currency;            // 수취 국가
     private Double exchangeRate;        // 환율
 
-    @PositiveOrZero(message = "송금액이 바르지 않습니다")
     @Max(value = 10000, message = "송금액이 바르지 않습니다")
+    @PositiveOrZero(message = "송금액이 바르지 않습니다")
     @NotNull(message = "송금액이 바르지 않습니다")
     private Integer remittanceAmount;    // 송금액
 }
