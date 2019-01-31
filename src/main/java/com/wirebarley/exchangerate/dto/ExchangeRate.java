@@ -16,5 +16,5 @@ public class ExchangeRate {
     @Max(value = 10000, message = "송금액이 바르지 않습니다")
     @PositiveOrZero(message = "송금액이 바르지 않습니다")
     @NotNull(message = "송금액이 바르지 않습니다")
-    private Integer remittanceAmount;    // 송금액
+    private Double remittanceAmount;    // 송금액
 }
